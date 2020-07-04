@@ -93,9 +93,9 @@ y = differential_manchester(binary)
 count = len(y)
 
 # Enclose with zeros (to match examples)
-# y.insert(0, 0)
-# y.insert(len(y), 0)
-# y.insert(len(y), 0)
+y.insert(0, 0)
+y.insert(len(y), 0)
+y.insert(len(y), 0)
 
 # X values to follow Y values
 x = np.arange(0, len(y))
