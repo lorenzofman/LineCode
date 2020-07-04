@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import gc
+from matplotlib.ticker import FormatStrFormatter
+import matplotlib.ticker as ticker
 high_level = 13
 mid_level = 0
 low_level = -13
@@ -51,42 +53,80 @@ def pseudo_ternary(bits):
 
 
 def manchester(bits):
-    return bits
+    encoded = []
+    for bit in bits:
+        if bit == 0:
+            encoded.append(low_level)
+            encoded.append(high_level)
+        else:
+            encoded.append(high_level)
+            encoded.append(low_level)
+    return encoded
 
 
 def differential_manchester(bits):
-    return bits
+    # Todo: Study about how first bit is encoded - for now, it's encoded with manchester
+    encoded = manchester([bits[0]])
+    first = encoded[0]
+    second = encoded[1]
+    for bit in bits[1:]:
+        if bit == 1:
+            first, second = second, first
+        encoded.append(first)
+        encoded.append(second)
+    return encoded
 
 
 # It's using monstrous 21 GB
 gc.enable()
 
 # Todo: Fetch data from input
-binary = np.array([1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1])
+binary = np.array([0, 1, 0, 0, 1, 1])
 
 # Assert that all values are bits
 assert all(bit == 0 or bit == 1 for bit in binary)
 
-# Voltage values
-y = ami(binary)
+# Apply line coding
+y = differential_manchester(binary)
+
+# Save values count (it may be equal to binary or the double)
+count = len(y)
 
 # Enclose with zeros (to match examples)
-y.insert(0, 0)
-y.insert(len(y), 0)
-y.insert(len(y), 0)
+# y.insert(0, 0)
+# y.insert(len(y), 0)
+# y.insert(len(y), 0)
 
 # X values to follow Y values
 x = np.arange(0, len(y))
 
-# Convert to string list
-binary = list(map(str, binary))
+# Convert binary to string list
+ticks = list(map(str, binary))
 
 # Insert first value as blank (non valid - to match examples)
-binary.insert(0, "")
+ticks.insert(0, "")
 
-# Create and plot graph
+# Fetch figure and axes
 fig, axes = plt.subplots()
-plt.setp(axes, xticks=x, xticklabels=binary, yticks=y, )
+
+# Set Y values to display voltage
+axes.yaxis.set_major_formatter(FormatStrFormatter('%dV'))
+
+# Setup x, y and ticks
+plt.setp(axes, xticks=x, xticklabels=ticks, yticks=y)
+
+# Create fixed spaced x ticks
+loc = ticker.IndexLocator(float(count) // float(len(binary)), 0)
+axes.xaxis.set_major_locator(loc)
+
+# Step function with post drawings
 plt.step(x, y, color='#ff084a', linewidth="3", where='post')
+
+# Make square graph to match examples
+axes.set_ylim([low_level * -low_level / 2, high_level * high_level / 2])
+
+# Add a nice grid
 plt.grid(color='#aaaaaa', linestyle='-', linewidth=0.5)
+
+# Display this beauty
 plt.show()
