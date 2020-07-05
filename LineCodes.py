@@ -3,6 +3,7 @@ import numpy as np
 import gc
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.ticker as ticker
+
 high_level = 13
 mid_level = 0
 low_level = -13
@@ -77,17 +78,49 @@ def differential_manchester(bits):
     return encoded
 
 
+from enum import Enum
+
+
+class LineCode(Enum):
+    nrz_l = 1
+    nrz_i = 2
+    bipolar = 3
+    ami = 4
+    pseudo_ternary = 5
+    manchester = 6
+    differential_manchester = 7
+
+
 # It's using monstrous 21 GB
 gc.enable()
 
 # Todo: Fetch data from input
-binary = np.array([0, 1, 0, 0, 1, 1])
+
+# binaryString = input("ENter binary sequence: ")
+print("The sequence should be input in the format: '1 0 1 0 1 0 0', without quotes and every bit separated by a space")
+binary = list(map(int, input("\nEnter binary sequence: ").strip().split()))
 
 # Assert that all values are bits
 assert all(bit == 0 or bit == 1 for bit in binary)
 
-# Apply line coding
-y = differential_manchester(binary)
+lineCoding = int(input(
+    "Select line coding: \n1 - nrz_l;\n2 - nrz_i;\n3 - bipolar;\n4 - ami;\n5 - pseudo_ternary;\n6 - manchester;\n7 - differential manchester;\nLine code:"))
+
+y = []
+if LineCode(lineCoding) == LineCode.nrz_l:
+    y = nrz_l(binary)
+elif LineCode(lineCoding) == LineCode.nrz_i:
+    y = nrz_i(binary)
+elif LineCode(lineCoding) == LineCode.bipolar:
+    y = bipolar(binary,0)
+elif LineCode(lineCoding) == LineCode.ami:
+    y = ami(binary)
+elif LineCode(lineCoding) == LineCode.pseudo_ternary:
+    y = pseudo_ternary(binary)
+elif LineCode(lineCoding) == LineCode.manchester:
+    y = manchester(binary)
+elif LineCode(lineCoding) == LineCode.differential_manchester:
+    y = differential_manchester(binary)
 
 # Save values count (it may be equal to binary or the double)
 count = len(y)
