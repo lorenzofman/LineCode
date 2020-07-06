@@ -1,8 +1,10 @@
+# Henrique Rodrigues, Lorenzo Kaufmann, Roberto Menegais, Thiago Pavin
 import matplotlib.pyplot as plt
 import numpy as np
-import gc
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.ticker as ticker
+from enum import Enum
+
 
 high_level = 5
 mid_level = 0
@@ -21,7 +23,6 @@ def nrz_l(bits):
 
 def nrz_i(bits):
     encoded = []
-    # Check if USB starts in low/high
     low = True
     for bit in bits:
         if bit == 1:
@@ -75,9 +76,6 @@ def differential_manchester(bits):
             encoded.append(first)
             encoded.append(second)
     return encoded
-
-
-from enum import Enum
 
 
 class LineCode(Enum):
