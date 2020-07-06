@@ -9,10 +9,6 @@ mid_level = 0
 low_level = -5
 
 
-# O protocolo RS-232 define uma faixa de tensões para considerar os sinais, sendo elas:
-# – -3 V a -15V como Marca = 1 = OFF
-# – +3V a +15V como Espaço = 0 = ON (Pronto)
-# Optamos por considerar um valor médio entre o máximo e minimo definidos, sendo então -9 e 9 volts
 def nrz_l(bits):
     encoded = []
     for bit in bits:
@@ -23,10 +19,6 @@ def nrz_l(bits):
     return encoded
 
 
-# A string of zeros causes the NRZI data toggle each bit time, while a string
-# of ones causes long period with no transition in the data. (USB NRZI)
-# http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2001f/interfacing/usb/appl_note.html
-# The USB protocol use bit-stuffing after every sequence of six '1', but we don't implement this here
 def nrz_i(bits):
     encoded = []
     # Check if USB starts in low/high
@@ -96,11 +88,6 @@ class LineCode(Enum):
     manchester = 5
     differential_manchester = 6
 
-
-# It's using monstrous 21 GB
-gc.enable()
-
-# Todo: Fetch data from input
 
 print("The sequence should be input in the format: '1 0 1 0 1 0 0', without quotes and every bit separated by a space")
 binary = list(map(int, input("\nEnter binary sequence: ").strip().split()))
